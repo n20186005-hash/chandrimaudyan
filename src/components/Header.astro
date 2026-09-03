@@ -1,0 +1,18 @@
+---
+import Logo from './Logo.astro';
+---
+<header class="site-header">
+  <div class="container row">
+    <Logo />
+    <nav aria-label="প্রধান নেভিগেশন">
+      <a href="/#পরিচিতি">পরিচিতি</a>
+      <a href="/#পরিকল্পনা">ভ্রমণ পরিকল্পনা</a>
+      <a href="/#যাতায়াত">যাতায়াত</a>
+      <a href="/#প্রশ্ন">সাধারণ প্রশ্ন</a>
+    </nav>
+    <a class="map-btn" href="https://maps.app.goo.gl/zYe6CikwUGvDFyes7" target="_blank" rel="noopener noreferrer">মানচিত্র খুলুন</a>
+  </div>
+</header>
+<style>
+.site-header{position:sticky;top:0;z-index:40;background:rgba(255,253,247,.9);border-bottom:1px solid rgba(14,75,54,.1);backdrop-filter:blur(14px)}.row{height:78px;display:flex;align-items:center;justify-content:space-between;gap:1.2rem}nav{display:flex;gap:1.25rem;font-weight:700;color:#365c4f}nav a:hover{color:#0e4b36}.map-btn{background:#0e4b36;color:white;border-radius:999px;padding:.7rem 1rem;font-weight:800}@media(max-width:900px){nav{display:none}.map-btn{font-size:.86rem}}
+</style>

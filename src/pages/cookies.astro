@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = true;
+---
+<BaseLayout title="কুকি সেটিংস — চন্দ্রিমা উদ্যান ঢাকা ভ্রমণ নির্দেশিকা" description="চন্দ্রিমা উদ্যান ঢাকা ভ্রমণ নির্দেশিকার কুকি ও বিশ্লেষণ পছন্দ নিয়ন্ত্রণ করুন।">
+  <section class="section legal"><div class="container" style="max-width:900px">
+    <p class="eyebrow">পছন্দ নিয়ন্ত্রণ</p><h1>কুকি সেটিংস</h1><p><strong>শেষ হালনাগাদ:</strong> সেপ্টেম্বর ২০২৬</p>
+    <p>আমরা কুকির ব্যবহার সীমিত রাখি। নিচে আপনার পছন্দ পরিবর্তন করা যায়। প্রয়োজনীয় সেটিংস বন্ধ করা যায় না; বিশ্লেষণ কেবল আপনার সম্মতির পর সক্রিয় হয়।</p>
+    <div class="prefs">
+      <section class="pref card"><div><h2>প্রয়োজনীয় কুকি</h2><p>ওয়েবসাইটের মৌলিক কার্যকারিতা ও আপনার কুকি-পছন্দ সংরক্ষণের জন্য প্রয়োজনীয়।</p></div><span class="state always">সবসময় সক্রিয়</span></section>
+      <section class="pref card"><div><h2>বিশ্লেষণ কুকি</h2><p>Google Analytics-এর মাধ্যমে সামগ্রিক ও বেনামী ব্যবহারধারা বুঝতে সাহায্য করে।</p></div><label class="switch"><input id="analytics" type="checkbox" /><span></span><b>Google Analytics</b></label></section>
+      <section class="pref card"><div><h2>পছন্দ কুকি</h2><p>এই সংস্করণে ভাষা বা থিমের জন্য আলাদা ট্র্যাকিং কুকি ব্যবহার করা হয় না; কুকি পছন্দ স্থানীয় ব্রাউজার স্টোরেজে রাখা হয়।</p></div><label class="switch"><input id="preferences" type="checkbox" checked /><span></span><b>ব্যবহারকারীর পছন্দ</b></label></section>
+      <section class="pref card"><div><h2>বিপণন কুকি</h2><p>এই অলাভজনক নির্দেশিকা ব্যক্তিগতকৃত বিজ্ঞাপন কুকি ব্যবহার করে না।</p></div><span class="state off">বন্ধ</span></section>
+    </div>
+    <div class="actions"><button id="save" class="btn btn-primary">পছন্দ সংরক্ষণ করুন</button><button id="reject" class="btn btn-secondary">ঐচ্ছিক সব প্রত্যাখ্যান করুন</button><span id="status" role="status" aria-live="polite"></span></div>
+  </div></section>
+  <script is:inline>
+    (() => {
+      const key = 'chandrima-cookie-prefs';
+      const analytics = document.getElementById('analytics');
+      const preferences = document.getElementById('preferences');
+      const status = document.getElementById('status');
+      const read = () => { try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; } };
+      const current = read(); analytics.checked = current.analytics === true; preferences.checked = current.preferences !== false;
+      const write = (prefs) => { localStorage.setItem(key, JSON.stringify(prefs)); window.dispatchEvent(new CustomEvent('chandrima-consent-updated', { detail: prefs })); status.textContent = 'আপনার পছন্দ সংরক্ষিত হয়েছে।'; };
+      document.getElementById('save').addEventListener('click', () => write({ necessary:true, analytics:analytics.checked, preferences:preferences.checked, marketing:false }));
+      document.getElementById('reject').addEventListener('click', () => { analytics.checked = false; preferences.checked = false; write({ necessary:true, analytics:false, preferences:false, marketing:false }); });
+    })();
+  </script>
+</BaseLayout>
+<style>
+.prefs{display:grid;gap:1rem;margin-top:2rem}.pref{padding:1.2rem 1.3rem;display:flex;justify-content:space-between;gap:1.5rem;align-items:center}.pref h2{margin:0}.pref p{margin:.2rem 0 0;max-width:620px}.state{white-space:nowrap;font-weight:900;border-radius:999px;padding:.5rem .75rem}.always{background:#e4efe5;color:#0e4b36}.off{background:#eee;color:#666}.switch{display:flex;align-items:center;gap:.6rem;white-space:nowrap}.switch input{position:absolute;opacity:0}.switch span{width:52px;height:30px;border-radius:999px;background:#a7b5af;position:relative;transition:.2s}.switch span::after{content:'';position:absolute;width:24px;height:24px;border-radius:50%;background:white;left:3px;top:3px;transition:.2s}.switch input:checked+span{background:#0e4b36}.switch input:checked+span::after{transform:translateX(22px)}.actions{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem;margin-top:1.5rem}#status{color:#0e4b36;font-weight:800}@media(max-width:650px){.pref{align-items:flex-start;flex-direction:column}}
+</style>

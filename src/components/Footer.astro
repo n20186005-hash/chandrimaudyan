@@ -1,0 +1,20 @@
+---
+import Logo from './Logo.astro';
+---
+<footer>
+  <div class="container footer-grid">
+    <div><Logo /><p>ক্রিসেন্ট লেক, গাছপালা ও স্মৃতিসৌধকে কেন্দ্র করে তৈরি একটি স্বাধীন দর্শনার্থী নির্দেশিকা।</p></div>
+    <div><strong>দ্রুত লিংক</strong><a href="/">মূলপাতা</a><a href="/#যাতায়াত">যাতায়াত</a><a href="/#প্রশ্ন">সাধারণ প্রশ্ন</a></div>
+    <div><strong>নীতিমালা</strong><a href="/privacy/">গোপনীয়তা নীতি</a><a href="/terms/">সেবার শর্তাবলি</a><a href="/cookies/">কুকি সেটিংস</a></div>
+    <div><strong>অবস্থান</strong><span>ক্রিসেন্ট, লেক রোড, ঢাকা, বাংলাদেশ</span><span>প্লাস কোড: Q98H+M7</span></div>
+  </div>
+  <div class="container legal-line">
+    <p>এই ওয়েবসাইটটি একটি স্বাধীন, অলাভজনক দর্শনার্থী তথ্য নির্দেশিকা প্রকল্প; কোনো সরকারি সংস্থা বা সরকারি সংগঠনের সঙ্গে এর প্রাতিষ্ঠানিক সম্পর্ক নেই।</p>
+    <p>স্থান-সংক্রান্ত তথ্য ঢাকা উত্তর সিটি কর্পোরেশন, ট্যুরিস্ট পুলিশ ঢাকা জোন এবং বাংলাদেশ ট্যুরিজম বোর্ডের প্রকাশ্য তথ্যের সঙ্গে মিলিয়ে প্রস্তুত করা হয়েছে; এতে কোনো বাণিজ্যিক সুপারিশ অন্তর্ভুক্ত নয়।</p>
+    <p>ছবির স্বত্ব: এই ওয়েবসাইটে প্রদর্শিত সব ছবির কপিরাইট সংশ্লিষ্ট আলোকচিত্রীর। ব্যবহৃত মুক্ত-লাইসেন্স ছবির নির্দিষ্ট কৃতিত্ব প্রকল্পের ছবি-উৎস নথিতে দেওয়া আছে।</p>
+    <p>© ২০২৬ চন্দ্রিমা উদ্যান ঢাকা ভ্রমণ নির্দেশিকা। সর্বস্বত্ব সংরক্ষিত।</p>
+  </div>
+</footer>
+<style>
+footer{background:#0b3d2c;color:#e8f3ec;padding:3.5rem 0 2rem}.footer-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:2rem}.footer-grid>div{display:flex;flex-direction:column;gap:.55rem}.footer-grid p,.footer-grid span,.footer-grid a{color:#cfe1d7;font-size:.92rem}.footer-grid strong{margin-bottom:.25rem;color:white}.footer-grid :global(.logo strong),.footer-grid :global(.logo small){color:white}.legal-line{border-top:1px solid rgba(255,255,255,.18);margin-top:2.2rem;padding-top:1.25rem}.legal-line p{margin:.42rem 0;color:#cfe1d7;font-size:.82rem}@media(max-width:850px){.footer-grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){.footer-grid{grid-template-columns:1fr}}
+</style>

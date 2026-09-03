@@ -1,0 +1,17 @@
+---
+interface Props { compact?: boolean; }
+const { compact = false } = Astro.props;
+---
+<a href="/" class="logo" aria-label="চন্দ্রিমা উদ্যান ভ্রমণ নির্দেশিকা — মূলপাতা">
+  <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="চাঁদ, সেতু ও পাতার সমন্বিত প্রতীক">
+    <circle cx="32" cy="32" r="29" fill="#f7f2e7" stroke="#0e4b36" stroke-width="3"/>
+    <path d="M16 35c8-13 24-13 32 0" fill="none" stroke="#0e4b36" stroke-width="4" stroke-linecap="round"/>
+    <path d="M18 36v8m28-8v8M23 31v13m18-13v13M28 27v17m8-17v17" stroke="#0e4b36" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M42 15c-7 1-11 6-10 12 5-2 9-5 10-12Z" fill="#6d9d63"/>
+    <path d="M17 47c10 4 20 4 30 0" fill="none" stroke="#7da7a0" stroke-width="2.6" stroke-linecap="round"/>
+  </svg>
+  {!compact && <span><strong>চন্দ্রিমা উদ্যান</strong><small>ঢাকা ভ্রমণ নির্দেশিকা</small></span>}
+</a>
+<style>
+.logo{display:inline-flex;align-items:center;gap:.72rem}.mark{width:46px;height:46px;flex:0 0 auto}.logo span{display:flex;flex-direction:column;line-height:1.14}.logo strong{font-size:1.05rem;color:#0e4b36}.logo small{font-size:.76rem;color:#587067;margin-top:.22rem}
+</style>
