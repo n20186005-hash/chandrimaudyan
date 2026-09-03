@@ -1,0 +1,68 @@
+---
+import { API_URL, normalize, buildHTML, fmtUpdated } from '../lib/weather';
+
+export const prerender = true;
+
+let raw: any = null;
+let rawJson = '';
+let staticHtml = '';
+let updatedText = 'সর্বশেষ হালনাগাদ এখনো পাওয়া যায়নি।';
+
+try {
+  const res = await fetch(API_URL, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(9000) });
+  if (res.ok) {
+    raw = await res.json();
+    if (raw?.current?.time) updatedText = 'সর্বশেষ হালনাগাদ: ' + fmtUpdated(raw.current.time);
+    const wx = normalize(raw);
+    if (wx) {
+      rawJson = JSON.stringify(raw).replace(/</g, '\\u003c');
+      staticHtml = buildHTML(wx);
+    }
+  }
+} catch {
+  // 构建环境无网络时保持空数据；浏览器端脚本会再尝试抓取。
+}
+---
+<section class="section weather-section" id="আবহাওয়া" aria-labelledby="weather-title">
+  <div class="container">
+    <p class="eyebrow">আবহাওয়া</p>
+    <h2 class="section-title" id="weather-title">এখনকার অবস্থা ও ৫ দিনের পূর্বাভাস</h2>
+    <p class="section-copy">লেকের ধারে হাঁটা বা ছবি তোলার পরিকল্পনা করার আগে তাপমাত্রা, বৃষ্টির সম্ভাবনা ও বাতাসের অবস্থা জেনে নিন। পূর্বাভাস দ্রুত বদলাতে পারে—যাত্রার আগে আবার দেখে নেওয়া ভালো।</p>
+    <div class="wx-card card" id="weather-root" aria-live="polite">
+      {staticHtml && <div set:html={staticHtml} />}
+      {!staticHtml && <p class="wx-fallback">আবহাওয়ার তথ্য লোড হচ্ছে… এক মুহূর্ত পর আবার দেখুন।</p>}
+    </div>
+    <div class="wx-meta">
+      <span id="wx-meta">{updatedText}</span>
+      <span>উৎস: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">Open-Meteo</a> (বিনামূল্যে মুক্ত আবহাওয়া ডেটা, কোনো ট্র্যাকিং কুকি নেই)</span>
+    </div>
+  </div>
+</section>
+
+{rawJson && <script type="application/json" id="weather-seed" is:inline set:html={rawJson} />}
+
+<script>
+  import { API_URL, normalize, buildHTML, fmtUpdated } from '../lib/weather';
+  (async () => {
+    const root = document.getElementById('weather-root');
+    const meta = document.getElementById('wx-meta');
+    if (!root) return;
+    const seedEl = document.getElementById('weather-seed');
+    const apply = (raw: any, updated: string | null) => {
+      const wx = normalize(raw);
+      if (!wx) return;
+      root.innerHTML = buildHTML(wx);
+      if (meta && updated) meta.textContent = 'সর্বশেষ হালনাগাদ: ' + fmtUpdated(updated);
+    };
+    if (seedEl) {
+      try { apply(JSON.parse(seedEl.textContent || 'null'), null); } catch { /* ignore */ }
+    }
+    try {
+      const res = await fetch(API_URL, { cache: 'no-store' });
+      if (res.ok) {
+        const fresh = await res.json();
+        apply(fresh, fresh?.current?.time || null);
+      }
+    } catch { /* 保留已显示的数据 */ }
+  })();
+</script>

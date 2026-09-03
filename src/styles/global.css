@@ -44,7 +44,79 @@ img { max-width: 100%; display: block; }
 .legal h2 { margin-top:2.3rem; font-size:1.5rem; }
 .legal p, .legal li { color:var(--muted); }
 .legal ul { padding-left:1.4rem; }
+/* ---------- ইতিহাস (timeline) ---------- */
+.history-grid{display:grid;grid-template-columns:1.5fr .8fr;gap:2.4rem;align-items:start}
+.history-grid>aside{position:sticky;top:7rem}
+.timeline{list-style:none;margin:1.9rem 0 0;padding:0;display:grid;gap:0}
+.timeline li{position:relative;padding:0 0 1.4rem 1.7rem;border-left:2px solid var(--leaf)}
+.timeline li::before{content:'';position:absolute;left:-6px;top:.32rem;width:10px;height:10px;border-radius:50%;background:var(--gold)}
+.timeline li:last-child{border-left-color:transparent}
+.timeline b{font-size:1.02rem}
+.timeline p{margin:.18rem 0 0;color:var(--muted);font-size:.95rem}
+.hist-note{margin-top:1.6rem;color:var(--muted);font-size:.92rem}
+.hist-fig{position:relative;border-radius:26px;overflow:hidden;min-height:340px;background:#d7e4da;box-shadow:0 20px 60px rgba(16,65,49,.14)}
+.hist-fig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hist-fig figcaption{position:absolute;left:1rem;right:1rem;bottom:1rem;color:#fff;background:rgba(8,37,28,.72);backdrop-filter:blur(8px);border-radius:14px;padding:.6rem .85rem;font-weight:700;font-size:.9rem}
+
+/* ---------- বৈশিষ্ট্য (features) ---------- */
+.feature-grid{display:grid;grid-template-columns:1.35fr .9fr;gap:2.4rem;align-items:start}
+.feature-list{list-style:none;margin:1.7rem 0 0;padding:0;display:grid;gap:.85rem}
+.feature-list li{display:flex;gap:.95rem;align-items:flex-start;background:rgba(255,253,247,.9);border:1px solid var(--line);border-radius:18px;padding:.95rem 1.05rem}
+.feature-list b{display:block;font-size:1rem}
+.feature-list p{margin:.14rem 0 0;color:var(--muted);font-size:.93rem}
+.fl-ic{width:42px;height:42px;flex:0 0 auto;display:grid;place-items:center;font-size:1.25rem;background:#e8f1e8;border-radius:50%}
+.spot-stack{display:grid;gap:1rem}
+.spot{position:relative;border-radius:22px;overflow:hidden;min-height:190px;background:#d7e4da}
+.spot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.spot figcaption{position:absolute;left:.9rem;bottom:.9rem;color:#fff;background:rgba(8,37,28,.72);backdrop-filter:blur(8px);border-radius:999px;padding:.4rem .8rem;font-weight:800;font-size:.86rem}
+
+/* ---------- সুবিধা (facilities) ---------- */
+.fac-note{margin-top:1.4rem;max-width:820px}
+.fac-group{margin-top:1.4rem}
+.fac-title{display:flex;align-items:center;gap:.6rem;font-weight:900;font-size:1.08rem;margin:0 0 .8rem}
+.fac-title span{border-radius:999px;background:#e8f1e8;color:var(--forest);padding:.3rem .75rem;font-size:.78rem;letter-spacing:.04em}
+.fac-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem}
+.fac{background:rgba(255,253,247,.9);border:1px solid var(--line);border-radius:18px;padding:1rem 1.05rem;display:flex;flex-direction:column;gap:.35rem}
+.fac b{font-size:.98rem;display:flex;align-items:center;gap:.5rem}
+.fac p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.6}
+.neutral-note{border-left:4px solid var(--gold);background:#fbf4e4;border-radius:0 16px 16px 0;padding:.95rem 1.15rem;margin-top:1.7rem;color:#5a4a24;font-size:.94rem}
+.neutral-note b{display:block;margin-bottom:.2rem}
+
+/* ---------- আবহাওয়া (weather) ---------- */
+.weather-section{background:linear-gradient(180deg,transparent,#eef2ea)}
+.wx-card{background:linear-gradient(150deg,#0c4633,#176048 55%,#2c6a52);color:#eef7f1;padding:1.8rem;border:0;border-radius:28px;box-shadow:0 26px 70px rgba(14,75,54,.22)}
+.wx-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.4rem}
+.wx-now{display:flex;align-items:center;gap:1.15rem}
+.wx-ic{font-size:3.6rem;line-height:1}
+.wx-temp{font-size:3.4rem;font-weight:900;line-height:1;display:block}
+.wx-desc{font-weight:800;font-size:1.02rem;opacity:.95}
+.wx-stats{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.55rem}
+.wx-stats li{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:.5rem .95rem;font-weight:800;font-size:.92rem}
+.wx-days{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-top:1.7rem}
+.wx-day{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:.95rem .6rem;text-align:center}
+.wx-day .wd{display:block;font-weight:900;font-size:.98rem}
+.wx-day .wdate{display:block;font-size:.8rem;opacity:.85;margin-top:.05rem}
+.wx-day .wic{display:block;font-size:1.8rem;margin:.5rem 0 .3rem;line-height:1}
+.wx-day .whi{display:block;font-weight:900;font-size:1.12rem;line-height:1}
+.wx-day .wlo{display:block;font-size:.8rem;opacity:.88;margin-top:.2rem}
+.wx-day .wx-pop{display:block;font-size:.8rem;color:#f8e6b4;margin-top:.3rem;font-weight:800}
+.wx-fallback{padding:1.2rem .4rem;text-align:center;font-weight:800}
+.wx-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem 1rem;margin:.7rem .3rem 0;color:var(--muted);font-size:.88rem}
+
+/* ---------- গল্প (stories) ---------- */
+.stories-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:2rem}
+.story{display:flex;flex-direction:column;gap:.7rem;padding:1.4rem}
+.story h3{margin:0;font-size:1.12rem;line-height:1.35}
+.story p{margin:0;color:var(--muted);font-size:.95rem}
+.kind{align-self:flex-start;border-radius:999px;padding:.32rem .75rem;font-weight:900;font-size:.76rem;letter-spacing:.02em}
+.k1{background:#e4efe5;color:#0e4b36}.k2{background:#f7e9cc;color:#7a5a16}
+.k3{background:#e2eef1;color:#1d5b66}.k4{background:#f0e6ef;color:#6c4a75}.k5{background:#fce9e0;color:#96502f}
+
 @media (max-width: 820px) {
-  .grid-3, .grid-2 { grid-template-columns:1fr; }
+  .grid-3, .grid-2, .fac-grid, .stories-grid { grid-template-columns:1fr; }
   .section { padding: 3.9rem 0; }
+  .history-grid, .feature-grid { grid-template-columns:1fr; }
+  .history-grid>aside{position:static}
+  .wx-days{grid-template-columns:repeat(3,1fr)}
 }
+@media (max-width: 560px){.wx-days{grid-template-columns:repeat(2,1fr)}.fac-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stories-grid{grid-template-columns:1fr}}
