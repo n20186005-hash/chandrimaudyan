@@ -81,6 +81,11 @@ img { max-width: 100%; display: block; }
 .fac p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.6}
 .neutral-note{border-left:4px solid var(--gold);background:#fbf4e4;border-radius:0 16px 16px 0;padding:.95rem 1.15rem;margin-top:1.7rem;color:#5a4a24;font-size:.94rem}
 .neutral-note b{display:block;margin-bottom:.2rem}
+.crumb{display:inline-block;background:#eef3ea;border:1px solid var(--line);border-radius:12px;padding:.5rem .85rem;margin:1.05rem 0 .6rem;font-weight:800;color:var(--forest);font-size:.92rem}
+.src-list{list-style:none;margin:1.7rem 0 0;padding:0;display:grid;gap:.8rem}
+.src-list li{background:rgba(255,253,247,.9);border:1px solid var(--line);border-radius:16px;padding:1rem 1.1rem;font-size:.93rem;color:var(--muted)}
+.src-list b{display:block;color:var(--forest);margin-bottom:.3rem;font-size:.96rem}
+.src-list a{font-weight:800;color:var(--forest);border-bottom:1px solid var(--leaf);word-break:break-all}
 
 /* ---------- আবহাওয়া (weather) ---------- */
 .weather-section{background:linear-gradient(180deg,transparent,#eef2ea)}

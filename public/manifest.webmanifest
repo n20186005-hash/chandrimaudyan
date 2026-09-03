@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "চন্দ্রিমা উদ্যান — ঢাকা ভ্রমণ নির্দেশিকা (Chandrima Udyan Guide)",
+  "short_name": "Chandrima Udyan",
+  "description": "Chandrima Udyan (চন্দ্রিমা উদ্যান), ঢাকা, বাংলাদেশ-এর ভ্রমণ নির্দেশিকা—মানচিত্র, আবহাওয়া, সুবিধা, ইতিহাস ও FAQ।",
+  "lang": "bn-BD",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fdf9f0",
+  "theme_color": "#0b3d2c",
+  "categories": ["travel", "education"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

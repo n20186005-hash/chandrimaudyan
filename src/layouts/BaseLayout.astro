@@ -7,9 +7,10 @@ interface Props {
   title: string;
   description: string;
   image?: string;
+  imageAlt?: string;
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
 }
-const { title, description, image = '/images/chandrima-bridge.jpg', jsonLd } = Astro.props;
+const { title, description, image = '/images/chandrima-bridge.jpg', imageAlt = 'Chandrima Udyan (চন্দ্রিমা উদ্যান), ঢাকা, বাংলাদেশ', jsonLd } = Astro.props;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const absoluteImage = Astro.site ? new URL(image, Astro.site).href : image;
 ---
@@ -23,11 +24,25 @@ const absoluteImage = Astro.site ? new URL(image, Astro.site).href : image;
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="bn_BD" />
+  <meta property="og:site_name" content="চন্দ্রিমা উদ্যান (Chandrima Udyan)" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={absoluteImage} />
+  <meta property="og:image:alt" content={imageAlt} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={absoluteImage} />
   {canonical && <link rel="canonical" href={canonical} />}
   {canonical && <meta property="og:url" content={canonical} />}
+  <meta name="theme-color" content="#0b3d2c" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="চন্দ্রিমা উদ্যান" />
   <link rel="icon" href="/favicon/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon/favicon-32.png" sizes="32x32" />
   <link rel="icon" href="/favicon/favicon-16.png" sizes="16x16" />
@@ -62,5 +77,12 @@ const absoluteImage = Astro.site ? new URL(image, Astro.site).href : image;
   <Header />
   <main><slot /></main>
   <Footer />
+  <script is:inline>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
