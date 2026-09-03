@@ -47,7 +47,7 @@ const absoluteImage = Astro.site ? new URL(image, Astro.site).href : image;
   <link rel="icon" href="/favicon/favicon-32.png" sizes="32x32" />
   <link rel="icon" href="/favicon/favicon-16.png" sizes="16x16" />
   <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
-  {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  {jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
   <script is:inline>
     (() => {
       const GA_ID = 'G-HXM22WWPKP';
@@ -74,8 +74,9 @@ const absoluteImage = Astro.site ? new URL(image, Astro.site).href : image;
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#main">প্রধান বিষয়বস্তুতে যান</a>
   <Header />
-  <main><slot /></main>
+  <main id="main"><slot /></main>
   <Footer />
   <script is:inline>
     if ('serviceWorker' in navigator) {

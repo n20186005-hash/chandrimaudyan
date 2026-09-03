@@ -3,6 +3,10 @@ import { API_URL, normalize, buildHTML, fmtUpdated } from '../lib/weather';
 
 export const prerender = true;
 
+// 服务端抓取与缓存模型（静态 Astro + Cloudflare Workers 静态资产）：
+// 1) 构建期在服务器端抓取 Open-Meteo（无密钥、9s 超时），把当前实况与 5 日预报渲染进页面（服务端快照缓存）；
+// 2) 产物在 Cloudflare 边缘层随 HTML 静态缓存；
+// 3) 页面加载后浏览器以 cache:'no-store' 再拉取一次，保证“实时”最新，抓取失败则保留已渲染快照。
 let raw: any = null;
 let rawJson = '';
 let staticHtml = '';
