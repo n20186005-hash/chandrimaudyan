@@ -1,0 +1,21 @@
+# STATIC QA — Chandrima Udyan
+
+PASS - astro.config.mjs syntax
+PASS - package.json parses
+PASS - forbidden string absent: example.com 
+PASS - forbidden string absent: localhost 
+PASS - forbidden string absent: chrome-extension:// 
+PASS - no Chinese characters in site source 
+PASS - no external runtime image URLs 
+PASS - required pages/assets exist 
+PASS - package.json ↔ pnpm-lock direct dependency sync 
+PASS - full pnpm lock graph present [packages=683, snapshots=684]
+PASS - all dependency versions exact 
+PASS - pnpm exact packageManager [pnpm@11.25.0]
+PASS - Node exact engine [24.20.0]
+PASS - single-package workspace file absent 
+PASS - Google Maps Bengali/Bangladesh locale 
+PASS - site URL configured in one place [1]
+PASS - sitemap conditional on site 
+
+RESULT: PASS
