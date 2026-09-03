@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = true;
+---
+<BaseLayout title="পাতাটি পাওয়া যায়নি (404) — চন্দ্রিমা উদ্যান ঢাকা ভ্রমণ নির্দেশিকা" description="আপনি যে পৃষ্ঠাটি খুঁজছেন তা বিদ্যমান নেই বা সরানো হয়েছে।" robots="noindex,follow">
+  <section class="section notfound"><div class="container" style="max-width:860px;text-align:center">
+    <p class="eyebrow">৪০৪</p>
+    <h1>পাতাটি পাওয়া যায়নি</h1>
+    <p class="section-copy">আপনি যে ঠিকানায় এসেছেন সেখানে কোনো পৃষ্ঠা নেই—হয়ত ঠিকানাটি বদলে গেছে, নয়তো ভুল টাইপ করা হয়েছে। মূল নির্দেশিকা থেকে আবার শুরু করতে পারেন।</p>
+    <div class="nf-actions">
+      <a class="btn btn-primary" href="/">মূলপাতায় ফিরে যান</a>
+      <a class="btn btn-secondary" href="https://maps.app.goo.gl/zYe6CikwUGvDFyes7" target="_blank" rel="noopener noreferrer">গুগল মানচিত্রে উদ্যান দেখুন</a>
+    </div>
+    <p class="nf-help">জনপ্রিয় অংশ: <a href="/#পরিচিতি">পরিচিতি</a> · <a href="/#ইতিহাস">ইতিহাস</a> · <a href="/#পরিকল্পনা">পরিকল্পনা</a> · <a href="/#সুবিধা">সুবিধা</a> · <a href="/#আবহাওয়া">আবহাওয়া</a> · <a href="/#যাতায়াত">যাতায়াত</a> · <a href="/#প্রশ্ন">সাধারণ প্রশ্ন</a> · <a href="/#তথ্যসূত্র">তথ্যসূত্র</a></p>
+  </div></section>
+</BaseLayout>
+<style>
+  .notfound{padding:7rem 0}.notfound h1{font-size:clamp(2.6rem,7vw,5.4rem);line-height:1.02;margin:.5rem 0 1.2rem}.notfound .section-copy{margin-inline:auto}.nf-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.8rem;margin:1.8rem 0}.nf-help{margin:1.4rem auto 0;max-width:640px;color:var(--muted)}.nf-help a{font-weight:800;color:var(--forest);border-bottom:1px solid var(--leaf)}
+</style>

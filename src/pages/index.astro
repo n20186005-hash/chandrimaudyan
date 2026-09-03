@@ -43,6 +43,43 @@ const attractionLd = {
   ]
 };
 
+const homeDesc = 'Chandrima Udyan (চন্দ্রিমা উদ্যান): ঢাকা, ঢাকা বিভাগ, বাংলাদেশ-এর শেরেবাংলা নগরে ক্রিসেন্ট লেকের সবুজ পার্ক—জাতীয় সংসদ ভবন ও বঙ্গবন্ধু সামরিক জাদুঘরের কাছে। ম্যাপ, যাতায়াত, বিনামূল্যে প্রবেশ, স্মৃতিসৌধ, সুবিধা ও FAQ।';
+
+const organizationLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${siteUrl}/#organization`,
+  name: 'চন্দ্রিমা উদ্যান (Chandrima Udyan) — ঢাকা ভ্রমণ নির্দেশিকা',
+  url: `${siteUrl}/`,
+  logo: `${siteUrl}/icons/icon.svg`
+};
+
+const webSiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteUrl}/#website`,
+  url: `${siteUrl}/`,
+  name: 'চন্দ্রিমা উদ্যান (Chandrima Udyan) — ঢাকা ভ্রমণ নির্দেশিকা',
+  inLanguage: 'bn-BD',
+  publisher: { '@id': `${siteUrl}/#organization` }
+};
+
+const webPageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${siteUrl}/#webpage`,
+  url: `${siteUrl}/`,
+  name: 'চন্দ্রিমা উদ্যান (Chandrima Udyan), ঢাকা, বাংলাদেশ — ভ্রমণ নির্দেশিকা, ম্যাপ ও যাতায়াত',
+  description: homeDesc,
+  inLanguage: 'bn-BD',
+  datePublished: '2026-09-03',
+  dateModified: '2026-09-03',
+  isPartOf: { '@id': `${siteUrl}/#website` },
+  about: { '@id': `${siteUrl}/#attraction` },
+  primaryImageOfPage: imageUrl,
+  publisher: { '@id': `${siteUrl}/#organization` }
+};
+
 const faqItems = [
   ['চন্দ্রিমা উদ্যান কোথায় অবস্থিত?', 'Chandrima Udyan (চন্দ্রিমা উদ্যান) বাংলাদেশের রাজধানী ঢাকার শেরেবাংলা নগরে (ঢাকা বিভাগ, বাংলাদেশ) জাতীয় সংসদ ভবনের পাশে অবস্থিত; সঠিক ঠিকানা: Crecent, Lake Road, ঢাকা। প্লাস কোড: Q98H+M7। গুগল মানচিত্র: https://maps.app.goo.gl/zYe6CikwUGvDFyes7।'],
   ['চন্দ্রিমা উদ্যানে প্রবেশ ফি আছে কি?', 'সাধারণ প্রবেশ বিনামূল্যে বলে বিভিন্ন স্থানীয় ভ্রমণসূত্রে উল্লেখ আছে। বিশেষ অনুষ্ঠান বা নিরাপত্তাজনিত ব্যবস্থায় প্রবেশ নিয়ম বদলাতে পারে।'],
@@ -94,7 +131,7 @@ const stories = [
   title="চন্দ্রিমা উদ্যান (Chandrima Udyan), ঢাকা, বাংলাদেশ — ভ্রমণ নির্দেশিকা, ম্যাপ ও যাতায়াত"
   description="Chandrima Udyan (চন্দ্রিমা উদ্যান): ঢাকা, ঢাকা বিভাগ, বাংলাদেশ-এর শেরেবাংলা নগরে ক্রিসেন্ট লেকের সবুজ পার্ক—জাতীয় সংসদ ভবন ও বঙ্গবন্ধু সামরিক জাদুঘরের কাছে। ম্যাপ, যাতায়াত, বিনামূল্যে প্রবেশ, স্মৃতিসৌধ, সুবিধা ও FAQ।"
   imageAlt="Chandrima Udyan (চন্দ্রিমা উদ্যান) — ঢাকা, বাংলাদেশের ক্রিসেন্ট লেকের ওপর আর্চ সেতু"
-  jsonLd={[attractionLd, faqLd]}
+  jsonLd={[attractionLd, organizationLd, webSiteLd, webPageLd, faqLd]}
 >
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero-photo" aria-hidden="true"></div>
