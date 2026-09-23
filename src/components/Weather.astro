@@ -3,10 +3,8 @@ import { API_URL, normalize, buildHTML, fmtUpdated } from '../lib/weather';
 
 export const prerender = true;
 
-// 服务端抓取与缓存模型（静态 Astro + Cloudflare Workers 静态资产）：
-// 1) 构建期在服务器端抓取 Open-Meteo（无密钥、9s 超时），把当前实况与 5 日预报渲染进页面（服务端快照缓存）；
-// 2) 产物在 Cloudflare 边缘层随 HTML 静态缓存；
-// 3) 页面加载后浏览器以 cache:'no-store' 再拉取一次，保证“实时”最新，抓取失败则保留已渲染快照。
+// Server-side fetch at build time renders a snapshot into the static HTML; the
+// edge (Cloudflare) then serves that HTML, and a client refresh keeps it fresh.
 let raw: any = null;
 let rawJson = '';
 let staticHtml = '';
@@ -24,13 +22,13 @@ try {
     }
   }
 } catch {
-  // 构建环境无网络时保持空数据；浏览器端脚本会再尝试抓取。
+  // Build environment without network keeps empty data; the browser script retries.
 }
 ---
 <section class="section weather-section" id="আবহাওয়া" aria-labelledby="weather-title">
   <div class="container">
     <p class="eyebrow">আবহাওয়া</p>
-    <h2 class="section-title" id="weather-title">এখনকার অবস্থা ও ৫ দিনের পূর্বাভাস</h2>
+    <h2 class="section-title" id="weather-title">এখনকার অবস্থা ও ৭ দিনের পূর্বাভাস</h2>
     <p class="section-copy">লেকের ধারে হাঁটা বা ছবি তোলার পরিকল্পনা করার আগে তাপমাত্রা, বৃষ্টির সম্ভাবনা ও বাতাসের অবস্থা জেনে নিন। পূর্বাভাস দ্রুত বদলাতে পারে—যাত্রার আগে আবার দেখে নেওয়া ভালো।</p>
     <div class="wx-card card" id="weather-root" aria-live="polite">
       {staticHtml && <div set:html={staticHtml} />}
@@ -38,7 +36,7 @@ try {
     </div>
     <div class="wx-meta">
       <span id="wx-meta">{updatedText}</span>
-      <span>উৎস: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">Open-Meteo</a> (বিনামূল্যে মুক্ত আবহাওয়া ডেটা, কোনো ট্র্যাকিং কুকি নেই)</span>
+      <span>উৎস: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">Open-Meteo</a></span>
     </div>
   </div>
 </section>
@@ -67,6 +65,6 @@ try {
         const fresh = await res.json();
         apply(fresh, fresh?.current?.time || null);
       }
-    } catch { /* 保留已显示的数据 */ }
+    } catch { /* keep the already rendered snapshot */ }
   })();
 </script>

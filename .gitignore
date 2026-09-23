@@ -1,7 +1,30 @@
+# Dependencies
 node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+
+# Build output
 dist/
 .astro/
 .wrangler/
-.dev.vars
+
+# Local env / secrets
 .env
+.env.*
+.dev.vars
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS / editor
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Misc
+*.tsbuildinfo
+.eslintcache
+.cache/
