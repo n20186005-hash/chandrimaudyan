@@ -1,5 +1,5 @@
 export const API_URL =
-  'https://api.open-meteo.com/v1/forecast?latitude=23.766533&longitude=90.378693&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,uv_index&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=Asia%2FDhaka&forecast_days=7';
+  'https://api.open-meteo.com/v1/forecast?latitude=23.7666866&longitude=90.3781398&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=Asia%2FDhaka&forecast_days=7';
 
 const BN_D = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
 const MONTHS = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
@@ -17,7 +17,7 @@ const CODES: Record<number, { ic: string; bn: string }> = {
   61: { ic: '🌧️', bn: 'হালকা বৃষ্টি' }, 63: { ic: '🌧️', bn: 'মাঝারি বৃষ্টি' }, 65: { ic: '🌧️', bn: 'ভারী বৃষ্টি' },
   66: { ic: '🌧️', bn: 'বরফমিশ্রিত বৃষ্টি' }, 67: { ic: '🌧️', bn: 'বরফমিশ্রিত ভারী বৃষ্টি' },
   71: { ic: '🌨️', bn: 'হালকা তুষারপাত' }, 73: { ic: '🌨️', bn: 'তুষারপাত' }, 75: { ic: '🌨️', bn: 'ভারী তুষারপাত' }, 77: { ic: '❄️', bn: 'তুষারকণা' },
-  80: { ic: '🌦️', bn: 'বিক্ষিপ্ত বৃষ্টি' }, 81: { ic: '🌧️', bn: 'বিক্ষিপ্ত বৃষ্টি' }, 82: { ic: '⛈️', bn: 'দমকা বৃষ্টি' },
+  80: { ic: '🌦️', bn: 'বিক্ষিপ্ত বৃষ্টি' }, 81: { ic: '🌧️', bn: 'বিক্ষিপ্ত বৃষ্টি' }, 82: { ic: '🌧️', bn: 'প্রবল বিক্ষিপ্ত বৃষ্টি' },
   85: { ic: '🌨️', bn: 'বিক্ষিপ্ত তুষার' }, 86: { ic: '🌨️', bn: 'বিক্ষিপ্ত ভারী তুষার' },
   95: { ic: '⛈️', bn: 'বজ্রসহ বৃষ্টি' }, 96: { ic: '⛈️', bn: 'শিলাসহ বজ্রঝড়' }, 99: { ic: '⛈️', bn: 'প্রচণ্ড বজ্রঝড়' },
 };
@@ -31,41 +31,60 @@ function pUTC(d: string): Date {
 }
 
 const RAIN = new Set([51, 53, 55, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99]);
-const STORM = new Set([82, 95, 96, 99]);
+const STORM = new Set([95, 96, 99]);
 
 export interface Wx {
-  temp: number; feels: number; hum: number; wind: number; code: number; uv: number;
-  days: { code: number; tmax: number; tmin: number; pop: number; uv: number; label: string; date: string }[];
+  temp: number; feels: number; hum: number; wind: number; code: number; uv: number | null;
+  observed: string;
+  days: { code: number; tmax: number; tmin: number; pop: number | null; uv: number | null; label: string; date: string }[];
 }
-
-export function normalize(raw: any): Wx | null {
-  if (!raw || !raw.current || !raw.daily) return null;
-  const cur = raw.current;
-  const days = (raw.daily.time || []).map((t: string, i: number) => ({
-    code: Number(raw.daily.weather_code?.[i] ?? 0),
-    tmax: Math.round(raw.daily.temperature_2m_max?.[i] ?? 0),
-    tmin: Math.round(raw.daily.temperature_2m_min?.[i] ?? 0),
-    pop: Math.round(raw.daily.precipitation_probability_max?.[i] ?? 0),
-    uv: Math.round(raw.daily.uv_index_max?.[i] ?? 0),
-    label: i === 0 ? 'আজ' : i === 1 ? 'আগামীকাল' : W_NAMES[pUTC(t).getUTCDay()],
-    date: toBn(pUTC(t).getUTCDate()) + ' ' + MONTHS[pUTC(t).getUTCMonth()],
-  }));
-  return {
-    temp: Math.round(cur.temperature_2m),
-    feels: Math.round(cur.apparent_temperature),
-    hum: Math.round(cur.relative_humidity_2m),
-    wind: Math.round(cur.wind_speed_10m),
-    code: Number(cur.weather_code),
-    uv: Math.round(cur.uv_index ?? 0),
-    days,
-  };
+const finite = (v: unknown, min: number, max: number): v is number => typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max;
+const known = (v: unknown): v is number => finite(v, 0, 99) && Number.isInteger(v) && Object.hasOwn(CODES, v);
+export const dhakaDay = (now = Date.now()) => new Date(now + 6 * 3600000).toISOString().slice(0, 10);
+export function normalize(raw: any, now = Date.now()): Wx | null {
+  if (!raw || raw.timezone !== 'Asia/Dhaka' || !raw.current || !raw.daily) return null;
+  const c = raw.current, d = raw.daily;
+  if (!finite(c.temperature_2m,-80,65) || !finite(c.apparent_temperature,-100,80) || !finite(c.relative_humidity_2m,0,100) || !finite(c.wind_speed_10m,0,250) || !known(c.weather_code)) return null;
+  if (typeof c.time !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?$/.test(c.time)) return null;
+  const stamp = Date.parse(c.time + '+06:00');
+  if (!Number.isFinite(stamp) || c.time.slice(0,10) !== dhakaDay(now) || stamp < now - 3 * 3600000 || stamp > now + 15 * 60000) return null;
+  const fields = ['time','weather_code','temperature_2m_max','temperature_2m_min'];
+  if (!fields.every(k => Array.isArray(d[k]) && d[k].length === 7)) return null;
+  for (const k of ['precipitation_probability_max','uv_index_max']) if (d[k] != null && (!Array.isArray(d[k]) || d[k].length !== 7)) return null;
+  const days: Wx['days'] = [];
+  for (let i=0;i<7;i++) {
+    const day = new Date(Date.parse(dhakaDay(now)+'T00:00:00Z') + i*86400000).toISOString().slice(0,10);
+    if (d.time[i] !== day || !known(d.weather_code[i]) || !finite(d.temperature_2m_max[i],-80,65) || !finite(d.temperature_2m_min[i],-80,65) || d.temperature_2m_min[i] > d.temperature_2m_max[i]) return null;
+    const pop = d.precipitation_probability_max?.[i] ?? null, uv = d.uv_index_max?.[i] ?? null;
+    if ((pop !== null && !finite(pop,0,100)) || (uv !== null && !finite(uv,0,30))) return null;
+    days.push({code:d.weather_code[i],tmax:Math.round(d.temperature_2m_max[i]),tmin:Math.round(d.temperature_2m_min[i]),pop:pop === null ? null : Math.round(pop),uv:uv === null ? null : Math.round(uv),label:i===0?'আজ':i===1?'আগামীকাল':W_NAMES[pUTC(day).getUTCDay()],date:toBn(pUTC(day).getUTCDate())+' '+MONTHS[pUTC(day).getUTCMonth()]});
+  }
+  return {temp:Math.round(c.temperature_2m),feels:Math.round(c.apparent_temperature),hum:Math.round(c.relative_humidity_2m),wind:Math.round(c.wind_speed_10m),code:c.weather_code,uv:days[0].uv,observed:c.time,days};
 }
-
 export function fmtUpdated(t: string): string {
-  const d = new Date(t);
-  const hh = toBn(String(d.getHours()).padStart(2, '0'));
-  const mm = toBn(String(d.getMinutes()).padStart(2, '0'));
-  return toBn(d.getDate()) + ' ' + MONTHS[d.getMonth()] + ', ' + hh + ':' + mm + ' (ঢাকা সময়)';
+  // Provider timestamps are explicitly local to Asia/Dhaka, independent of the viewer's zone.
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(t);
+  return m ? toBn(Number(m[3]))+' '+MONTHS[Number(m[2])-1]+', '+toBn(m[4])+':'+toBn(m[5])+' (ঢাকা সময়)' : 'সময় পাওয়া যায়নি';
+}
+export async function fetchForecast(timeoutMs = 8000): Promise<any> {
+  const controller = new AbortController();
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<never>((_, reject) => { timer = setTimeout(() => { controller.abort(); reject(new Error('Weather deadline')); }, timeoutMs); });
+  const request = (async () => {
+    const response = await fetch(API_URL, {headers:{accept:'application/json'},cache:'no-store',signal:controller.signal});
+    if (!response.ok) throw new Error('Weather response');
+    if (Number(response.headers.get('content-length')) > 524288) throw new Error('Weather body too large');
+    let text = '';
+    if (response.body) {
+      const reader=response.body.getReader(); const decoder=new TextDecoder(); let bytes=0;
+      try { while(true) { const {value,done}=await reader.read(); if(done) break; bytes+=value.byteLength; if(bytes>524288) throw new Error('Weather body too large'); text+=decoder.decode(value,{stream:true}); } text+=decoder.decode(); }
+      finally { reader.releaseLock(); }
+    } else text=await response.text();
+    if (new TextEncoder().encode(text).length>524288) throw new Error('Weather body too large');
+    const raw=JSON.parse(text); if(!normalize(raw)) throw new Error('Invalid or stale weather'); return raw;
+  })();
+  try { return await Promise.race([request,timeout]); }
+  finally { clearTimeout(timer!); controller.abort(); }
 }
 
 // Visitors only care about "will it rain / what to bring" — so we derive concrete, human-readable
@@ -90,8 +109,8 @@ export function buildSuggestions(w: Wx): Suggestions {
   const code = w.code;
   const tmax = today ? today.tmax : w.temp;
   const tmin = today ? today.tmin : w.temp;
-  const pop = today ? today.pop : 0;
-  const uv = today ? Math.max(today.uv, w.uv) : w.uv;
+  const pop = today?.pop ?? 0;
+  const uv = Math.max(today?.uv ?? 0, w.uv ?? 0);
   const temp = w.temp;
   const beau = kmhToBeaufort(w.wind);
   const outfit: string[] = [];
@@ -101,16 +120,17 @@ export function buildSuggestions(w: Wx): Suggestions {
 
   // বৃষ্টি / বজ্রবৃষ্টি
   if (STORM.has(code)) {
-    risk = 'বজ্রবৃষ্টি সতর্কতা—গাছের নিচে আশ্রয় না নিয়ে নিরাপদ ছায়ায় থাকুন; উন্মুক্ত জায়গায় না থেকে বিশ্রাম নিন।';
-    plan.push('খোলা জায়গায় থাকা কমিয়ে নিরাপদ আশ্রয় নিন');
+    risk = 'বজ্রবৃষ্টির পূর্বাভাস—গাছের নিচে নয়, নিরাপদ ভবনের ভেতরে আশ্রয় নিন; স্থানীয় সতর্কতা দেখুন।';
+    plan.push('খোলা জায়গা এড়িয়ে নিরাপদ ভবনে আশ্রয় নিন');
     items.push('রেইনকোট (বাতাসে লম্বা ছাতা সুবিধাজনক নয়)');
-  } else if (code === 65 || code === 67 || (code >= 80 && code <= 82)) {
+  } else if (code === 65 || code === 67 || code === 82) {
     risk = 'বৃষ্টি তুলনামূলক বেশি—লেকের ধার ও নিচু জায়গা এড়িয়ে চলুন।';
     plan.push('খোলা মাঠে দীর্ঘ ঘোরাঘুরি এড়িয়ে ছায়ায় থাকুন');
-  } else if (code >= 51 && code <= 67) {
+  } else if ((code >= 51 && code <= 67) || code === 80 || code === 81) {
     plan.push('হালকা বৃষ্টিতে রাস্তা পিচ্ছিল—ধীরে হাঁটুন');
     items.push('ভাঁজযোগ্য ছাতা');
   }
+  if (pop >= 60 && !RAIN.has(code)) plan.push('বৃষ্টির সম্ভাবনা বেশি—পরিকল্পনা নমনীয় রাখুন; সম্ভাবনা বৃষ্টির তীব্রতা বোঝায় না');
   if (pop >= 60 || RAIN.has(code)) {
     if (!items.includes('ভাঁজযোগ্য ছাতা')) items.push('ছাতা বা রেইনকোট সঙ্গে রাখুন');
     if (!plan.includes('খোলা মাঠে দীর্ঘ ঘোরাঘুরি এড়িয়ে ছায়ায় থাকুন'))
@@ -150,10 +170,10 @@ export function buildSuggestions(w: Wx): Suggestions {
 
   // রৌদ্র / মেঘলা
   if (code === 0 || code === 1) {
-    plan.push('আবহাওয়া ভালো—খোলা আকাশে হাঁটা ও সূর্যোদয়/সূর্যাস্তের দৃশ্য উপভোগ করুন');
+    plan.push('আকাশ পরিষ্কার—তাপ, বাতাস ও স্থানীয় প্রবেশের নিয়ম দেখে হাঁটার পরিকল্পনা করুন');
     if (uv < 5 && !items.includes('সানস্ক্রিন ও টুপি')) items.push('সানস্ক্রিন মনে রাখুন');
   } else if (code === 2 || code === 3) {
-    plan.push('আলো নরম—ফটোগ্রাফির জন্য ভালো, বেশি সময় বাইরে থাকা যায়');
+    plan.push('মেঘলা আকাশে আলো নরম হতে পারে—তাপ, আর্দ্রতা ও বৃষ্টির অবস্থা দেখে বাইরে থাকার সময় ঠিক করুন');
   }
 
   // কুয়াশা
@@ -170,7 +190,7 @@ export function buildHTML(w: Wx): string {
   const ci = codeInfo(w.code);
   const s = buildSuggestions(w);
   const today = w.days[0];
-  const pop = today ? today.pop : 0;
+  const pop = today?.pop ?? null;
   const sug = (title: string, arr: string[], ic: string) =>
     arr.length
       ? '<div class="wx-sug-block"><h4>' + ic + ' ' + title + '</h4><ul>' +
@@ -179,8 +199,8 @@ export function buildHTML(w: Wx): string {
   const dayCards = w.days
     .map((dd) => {
       const di = codeInfo(dd.code);
-      const dpop = dd.pop > 0 ? '<span class="wx-pop">💧 বৃষ্টি ' + toBn(dd.pop) + '%</span>' : '';
-      const duv = dd.uv > 0 ? '<span class="wx-uv">☀️ UV ' + toBn(dd.uv) + '</span>' : '';
+      const dpop = dd.pop !== null ? '<span class="wx-pop">💧 বৃষ্টি ' + toBn(dd.pop) + '%</span>' : '';
+      const duv = dd.uv !== null ? '<span class="wx-uv">☀️ UV ' + toBn(dd.uv) + '</span>' : '';
       return (
         '<div class="wx-day"><span class="wd">' + dd.label + '</span>' +
         '<span class="wdate">' + dd.date + '</span>' +
@@ -195,14 +215,14 @@ export function buildHTML(w: Wx): string {
     '<div class="wx-top">' +
     '<div class="wx-now">' +
     '<span class="wx-ic" role="img" aria-label="' + ci.bn + '">' + ci.ic + '</span>' +
-    '<div><span class="wx-temp">' + toBn(w.temp) + '°</span>' +
+    '<div><span class="wx-temp">' + toBn(w.temp) + '°C</span>' +
     '<span class="wx-desc">' + ci.bn + '</span></div></div>' +
     '<ul class="wx-stats">' +
-    '<li>অনুভূত: ' + toBn(w.feels) + '°</li>' +
+    '<li>অনুভূত: ' + toBn(w.feels) + '°C</li>' +
     '<li>আর্দ্রতা: ' + toBn(w.hum) + '%</li>' +
-    (pop > 0 ? '<li>বৃষ্টির সম্ভাবনা: ' + toBn(pop) + '%</li>' : '') +
+    (pop !== null ? '<li>বৃষ্টির সম্ভাবনা: ' + toBn(pop) + '%</li>' : '') +
     '<li>বাতাস: ' + toBn(w.wind) + ' কিমি/ঘণ্টা</li>' +
-    '<li>UV: ' + toBn(w.uv) + '</li>' +
+    (w.uv !== null ? '<li>আজকের সর্বোচ্চ UV: ' + toBn(w.uv) + '</li>' : '') +
     '</ul></div>' +
     '<div class="wx-sug">' +
     sug('যাত্রার পোশাক', s.outfit, '👕') +

@@ -8,7 +8,7 @@ const site = configuredSite || undefined;
 export default defineConfig({
   site,
   output: 'static',
-  integrations: site ? [sitemap()] : [],
+  integrations: site ? [sitemap({ filter: page => !/\/(?:404(?:\.html)?|cookies|privacy|terms)\/?$/.test(new URL(page).pathname) })] : [],
   vite: {
     plugins: [tailwindcss()]
   }

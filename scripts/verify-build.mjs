@@ -10,7 +10,7 @@ const checks = {
   'airport content': h.includes('বিমানবন্দর'),
   '7-day heading': h.includes('৭ দিনের পূর্বাভাস'),
   'jsonld image array': h.includes('"image":["https://chandrimaudyan.com/images/chandrima-bridge.jpg"]'),
-  'reviewCount 27320': h.includes('27320'),
+  'no own rating schema': !h.includes('aggregateRating'),
   'og:site_name guide format': h.includes('ঢাকা ভ্রমণ নির্দেশিকা'),
   'umbrella advice text': h.includes('ছাতা'),
   'seasonal table': h.includes('ঋতুভিত্তিক ভ্রমণ কৌশল'),

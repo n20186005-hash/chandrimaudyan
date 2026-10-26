@@ -20,7 +20,7 @@ assert('storm: shelter plan', s1.plan.some((x: string) => x.includes('আশ্�
 const s2 = buildSuggestions(mk(0, 34, 8, 9, 0, 34, 26));
 assert('hot: no risk', s2.risk === null);
 assert('hot: sunscreen+hat+glasses item', s2.items.some((x: string) => x.includes('সানস্ক্রিন, টুপি, সানগ্লাস')));
-assert('hot: sunny plan', s2.plan.some((x: string) => x.includes('সূর্যোদয়')));
+assert('hot: clear-sky advice respects local access', s2.plan.some((x: string) => x.includes('আকাশ পরিষ্কার') && x.includes('প্রবেশের নিয়ম')));
 assert('hot: uv outfit', s2.outfit.some((x: string) => x.includes('UV সূচক')));
 
 // 3) Moderate rain + high pop -> umbrella item, wet-path plan, no risk

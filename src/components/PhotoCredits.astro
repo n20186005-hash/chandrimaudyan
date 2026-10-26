@@ -1,0 +1,58 @@
+---
+const photos = [
+  {
+    "path": "/images/chandrima-bridge.jpg",
+    "author": "Nahid Sultan",
+    "date": "2014-07-07",
+    "source": "https://commons.wikimedia.org/wiki/File:Chandrima_Uddan_(02).jpg",
+    "licence": "CC BY-SA 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "path": "/images/chandrima-path.jpg",
+    "author": "Nahid Sultan",
+    "date": "2014-09-28",
+    "source": "https://commons.wikimedia.org/wiki/File:Chandrima_Uddan_(09).jpg",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+  },
+  {
+    "path": "/images/chandrima-garden.jpg",
+    "author": "Asivechowdhury",
+    "date": "2018-12-14",
+    "source": "https://commons.wikimedia.org/wiki/File:Chandrima_Uddan_10.jpg",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+  },
+  {
+    "path": "/images/chandrima-mausoleum.jpg",
+    "author": "Nahid Sultan",
+    "date": "2014-09-28",
+    "source": "https://commons.wikimedia.org/wiki/File:Chandrima_Uddan_(08).jpg",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+  },
+  {
+    "path": "/images/chandrima-wide.jpg",
+    "author": "Mithail Afrige",
+    "date": "2022-04-25",
+    "source": "https://commons.wikimedia.org/wiki/File:Chandrima_uddan_Dhaka,Bangladesh.jpg",
+    "licence": "CC BY 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "path": "/images/chandrima-mosque.jpg",
+    "author": "Nahid Sultan",
+    "date": "2014-09-28",
+    "source": "https://commons.wikimedia.org/wiki/File:Chandrima_Uddan_Mosque.jpg",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+  }
+];
+---
+<div id="ছবির-কৃতিত্ব" class="photo-credits">
+  <h3>আলোকচিত্রের কৃতিত্ব ও লাইসেন্স</h3>
+  <p>এগুলো ঐতিহাসিক আলোকচিত্র, বর্তমান অবস্থার সরাসরি ছবি নয়। মূল JPG অপরিবর্তিত; পৃষ্ঠায় দেখানোর সময় আকার ও দৃশ্যমান অংশ বদলাতে পারে। ছবিগুলোর পুনর্ব্যবহারে সংশ্লিষ্ট লাইসেন্স প্রযোজ্য।</p>
+  <ul>{photos.map(p => <li><a href={p.path}>ছবি</a> — © {p.author} ({p.date}) · <a href={p.source} target="_blank" rel="noopener noreferrer">Wikimedia Commons উৎস</a> · <a href={p.licenceUrl} target="_blank" rel="noopener noreferrer">{p.licence}</a></li>)}</ul>
+</div>
+<style>.photo-credits{margin-top:2rem}.photo-credits a{text-decoration:underline}.photo-credits li{margin:.6rem 0;overflow-wrap:anywhere}</style>

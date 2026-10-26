@@ -1,5 +1,5 @@
 /* Chandrima Udyan PWA Service Worker */
-const CACHE = 'chandrima-udyan-v1';
+const CACHE = 'chandrima-udyan-v2-2026-10-25';
 const CORE = ['/', '/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-192.png', '/icons/icon-512.png', '/images/chandrima-bridge.jpg'];
 
 self.addEventListener('install', (event) => {
@@ -26,9 +26,9 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(req).then((res) => {
         const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put('/', copy));
+        if (res.ok) event.waitUntil(caches.open(CACHE).then((c) => c.put(req, copy)));
         return res;
-      }).catch(() => caches.match('/'))
+      }).catch(async () => (await caches.match(req)) || new Response('অফলাইনে এই পৃষ্ঠাটি পাওয়া যাচ্ছে না।', { status:503, headers:{'Content-Type':'text/plain; charset=utf-8'} }))
     );
     return;
   }
@@ -43,6 +43,6 @@ self.addEventListener('fetch', (event) => {
         }
         return res;
       });
-    }).catch(() => caches.match('/'))
+    }).catch(async () => (await caches.match(req)) || new Response('অফলাইনে এই পৃষ্ঠাটি পাওয়া যাচ্ছে না।', { status:503, headers:{'Content-Type':'text/plain; charset=utf-8'} }))
   );
 });

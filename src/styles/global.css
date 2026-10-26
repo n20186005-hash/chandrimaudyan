@@ -98,7 +98,7 @@ img { max-width: 100%; display: block; }
 .wx-desc{font-weight:800;font-size:1.02rem;opacity:.95}
 .wx-stats{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.55rem}
 .wx-stats li{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:.5rem .95rem;font-weight:800;font-size:.92rem}
-.wx-days{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-top:1.7rem}
+.wx-days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.75rem;margin-top:1.7rem}
 .wx-day{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:.95rem .6rem;text-align:center}
 .wx-day .wd{display:block;font-weight:900;font-size:.98rem}
 .wx-day .wdate{display:block;font-size:.8rem;opacity:.85;margin-top:.05rem}
@@ -123,9 +123,9 @@ img { max-width: 100%; display: block; }
   .section { padding: 3.9rem 0; }
   .history-grid, .feature-grid { grid-template-columns:1fr; }
   .history-grid>aside{position:static}
-  .wx-days{grid-template-columns:repeat(3,1fr)}
+  .wx-days{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
-@media (max-width: 560px){.wx-days{grid-template-columns:repeat(2,1fr)}.fac-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stories-grid{grid-template-columns:1fr}}
+@media (max-width: 560px){.wx-days{grid-template-columns:repeat(2,minmax(0,1fr))}.fac-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stories-grid{grid-template-columns:1fr}}
 
 /* ---------- যাতায়াত (transport cards) ---------- */
 .route-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:2rem}
@@ -191,3 +191,6 @@ img { max-width: 100%; display: block; }
 .tip p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.65}
 @media (max-width: 900px){.tip-grid{grid-template-columns:1fr 1fr}}
 @media (max-width: 560px){.tip-grid{grid-template-columns:1fr}}
+
+/* Weather content may shrink naturally on narrow screens. */
+.wx-card,.wx-top,.wx-now,.wx-day,.wx-stats,.wx-sug-block{min-width:0;overflow-wrap:anywhere}.wx-now{flex-wrap:wrap}.wx-stats{padding-inline-start:1.2rem}

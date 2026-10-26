@@ -1,5 +1,5 @@
 ---
-import { API_URL, normalize, buildHTML, fmtUpdated } from '../lib/weather';
+import { fetchForecast, normalize, buildHTML, fmtUpdated } from '../lib/weather';
 
 export const prerender = true;
 
@@ -8,18 +8,15 @@ export const prerender = true;
 let raw: any = null;
 let rawJson = '';
 let staticHtml = '';
-let updatedText = 'সর্বশেষ হালনাগাদ এখনো পাওয়া যায়নি।';
+let updatedText = 'পূর্বাভাসের সময় পাওয়া যায়নি।';
 
 try {
-  const res = await fetch(API_URL, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(9000) });
-  if (res.ok) {
-    raw = await res.json();
-    if (raw?.current?.time) updatedText = 'সর্বশেষ হালনাগাদ: ' + fmtUpdated(raw.current.time);
-    const wx = normalize(raw);
-    if (wx) {
-      rawJson = JSON.stringify(raw).replace(/</g, '\\u003c');
-      staticHtml = buildHTML(wx);
-    }
+  raw = await fetchForecast(9000);
+  const wx = normalize(raw);
+  if (wx) {
+    updatedText = 'পূর্বাভাসের সময়: ' + fmtUpdated(wx.observed);
+    rawJson = JSON.stringify(raw).replace(/</g, '\\u003c');
+    staticHtml = buildHTML(wx);
   }
 } catch {
   // Build environment without network keeps empty data; the browser script retries.
@@ -32,7 +29,7 @@ try {
     <p class="section-copy">লেকের ধারে হাঁটা বা ছবি তোলার পরিকল্পনা করার আগে তাপমাত্রা, বৃষ্টির সম্ভাবনা ও বাতাসের অবস্থা জেনে নিন। পূর্বাভাস দ্রুত বদলাতে পারে—যাত্রার আগে আবার দেখে নেওয়া ভালো।</p>
     <div class="wx-card card" id="weather-root" aria-live="polite">
       {staticHtml && <div set:html={staticHtml} />}
-      {!staticHtml && <p class="wx-fallback">আবহাওয়ার তথ্য লোড হচ্ছে… এক মুহূর্ত পর আবার দেখুন।</p>}
+      {!staticHtml && <p class="wx-fallback">আবহাওয়ার তথ্য এখন পাওয়া যাচ্ছে না। পরে আবার চেষ্টা করুন; স্থানীয় সতর্কতা যাচাই করুন।</p>}
     </div>
     <div class="wx-meta">
       <span id="wx-meta">{updatedText}</span>
@@ -44,27 +41,31 @@ try {
 {rawJson && <script type="application/json" id="weather-seed" is:inline set:html={rawJson} />}
 
 <script>
-  import { API_URL, normalize, buildHTML, fmtUpdated } from '../lib/weather';
+  import { fetchForecast, normalize, buildHTML, fmtUpdated } from '../lib/weather';
   (async () => {
     const root = document.getElementById('weather-root');
     const meta = document.getElementById('wx-meta');
     if (!root) return;
     const seedEl = document.getElementById('weather-seed');
-    const apply = (raw: any, updated: string | null) => {
+    let shown = false;
+    const apply = (raw: unknown) => {
       const wx = normalize(raw);
-      if (!wx) return;
-      root.innerHTML = buildHTML(wx);
-      if (meta && updated) meta.textContent = 'সর্বশেষ হালনাগাদ: ' + fmtUpdated(updated);
+      if (!wx) return false;
+      root.innerHTML = buildHTML(wx); shown = true;
+      if (meta) meta.textContent = 'পূর্বাভাসের সময়: ' + fmtUpdated(wx.observed);
+      return true;
     };
+    // A build snapshot must still be fresh when the document is opened.
+    root.innerHTML = '<p class="wx-fallback">আবহাওয়ার তথ্য লোড হচ্ছে…</p>';
     if (seedEl) {
-      try { apply(JSON.parse(seedEl.textContent || 'null'), null); } catch { /* ignore */ }
+      try { apply(JSON.parse(seedEl.textContent || 'null')); } catch { /* ignore invalid seed */ }
     }
-    try {
-      const res = await fetch(API_URL, { cache: 'no-store' });
-      if (res.ok) {
-        const fresh = await res.json();
-        apply(fresh, fresh?.current?.time || null);
-      }
-    } catch { /* keep the already rendered snapshot */ }
+    try { apply(await fetchForecast()); }
+    catch {
+      if (!shown) {
+        root.innerHTML = '<p class="wx-fallback">আবহাওয়ার তথ্য এখন পাওয়া যাচ্ছে না। পরে আবার চেষ্টা করুন; স্থানীয় সতর্কতা যাচাই করুন।</p>';
+        if (meta) meta.textContent = 'পূর্বাভাসের সময় পাওয়া যায়নি।';
+      } else if (meta) meta.textContent += ' · নতুন তথ্য আনা যায়নি; দেখানো পূর্বাভাসের সময় খেয়াল করুন।';
+    }
   })();
 </script>

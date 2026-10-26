@@ -4,9 +4,9 @@
 
 | স্থানীয় নাম | মূল ফাইলের সরাসরি ঠিকানা | উৎস/কৃতিত্ব | লাইসেন্স |
 |---|---|---|---|
-| `public/images/chandrima-bridge.jpg` | `https://upload.wikimedia.org/wikipedia/commons/f/f4/Chandrima_Uddan_%2802%29.jpg` | Nahid Sultan — Wikimedia Commons | CC BY-SA 4.0 |
+| `public/images/chandrima-bridge.jpg` | `https://upload.wikimedia.org/wikipedia/commons/f/f4/Chandrima_Uddan_%2802%29.jpg` | Nahid Sultan — Wikimedia Commons | CC BY-SA 3.0 |
 | `public/images/chandrima-path.jpg` | `https://upload.wikimedia.org/wikipedia/commons/b/b7/Chandrima_Uddan_%2809%29.jpg` | Nahid Sultan — Wikimedia Commons | CC BY-SA 4.0 |
-| `public/images/chandrima-garden.jpg` | `https://upload.wikimedia.org/wikipedia/commons/3/3a/Chandrima_Uddan_10.jpg` | Asivechowdhury — Wikimedia Commons | Commons ফাইল পৃষ্ঠায় উল্লিখিত লাইসেন্স |
+| `public/images/chandrima-garden.jpg` | `https://upload.wikimedia.org/wikipedia/commons/3/3a/Chandrima_Uddan_10.jpg` | Asivechowdhury — Wikimedia Commons | CC BY-SA 4.0 |
 | `public/images/chandrima-mausoleum.jpg` | `https://upload.wikimedia.org/wikipedia/commons/6/6f/Chandrima_Uddan_%2808%29.jpg` | Nahid Sultan — Wikimedia Commons | CC BY-SA 4.0 |
 | `public/images/chandrima-wide.jpg` | `https://upload.wikimedia.org/wikipedia/commons/0/0a/Chandrima_uddan_Dhaka%2CBangladesh.jpg` | Mithail Afrige — Wikimedia Commons | CC BY 4.0 |
 | `public/images/chandrima-mosque.jpg` | `https://upload.wikimedia.org/wikipedia/commons/0/00/Chandrima_Uddan_Mosque.jpg` | Nahid Sultan — Wikimedia Commons | CC BY-SA 4.0 |

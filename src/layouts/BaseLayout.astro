@@ -12,7 +12,6 @@ interface Props {
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
 }
 const { title, description, image = '/images/chandrima-bridge.jpg', imageAlt = 'Chandrima Udyan (চন্দ্রিমা উদ্যান), ঢাকা, বাংলাদেশ', robots = 'index,follow,max-image-preview:large', jsonLd } = Astro.props;
-const noindex = robots.includes('noindex');
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const absoluteImage = Astro.site ? new URL(image, Astro.site).href : image;
 ---
@@ -35,8 +34,8 @@ const absoluteImage = Astro.site ? new URL(image, Astro.site).href : image;
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={absoluteImage} />
-  {canonical && !noindex && <link rel="canonical" href={canonical} />}
-  {canonical && !noindex && <meta property="og:url" content={canonical} />}
+  {canonical && <link rel="canonical" href={canonical} />}
+  {canonical && <meta property="og:url" content={canonical} />}
   <meta name="theme-color" content="#0b3d2c" />
   <link rel="manifest" href="/manifest.webmanifest" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -48,30 +47,7 @@ const absoluteImage = Astro.site ? new URL(image, Astro.site).href : image;
   <link rel="icon" href="/favicon/favicon-16.png" sizes="16x16" />
   <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
   {jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
-  <script is:inline>
-    (() => {
-      const GA_ID = 'G-HXM22WWPKP';
-      const loadAnalytics = () => {
-        if (document.querySelector('script[data-ga4-loader]')) return;
-        const s = document.createElement('script');
-        s.async = true;
-        s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-        s.dataset.ga4Loader = 'true';
-        document.head.appendChild(s);
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function(){ window.dataLayer.push(arguments); };
-        window.gtag('js', new Date());
-        window.gtag('config', GA_ID, { anonymize_ip: true });
-      };
-      try {
-        const prefs = JSON.parse(localStorage.getItem('chandrima-cookie-prefs') || '{}');
-        if (prefs.analytics === true) loadAnalytics();
-        window.addEventListener('chandrima-consent-updated', (event) => {
-          if (event.detail?.analytics === true) loadAnalytics();
-        });
-      } catch (_) {}
-    })();
-  </script>
+  <script is:inline src="/analytics.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">প্রধান বিষয়বস্তুতে যান</a>
