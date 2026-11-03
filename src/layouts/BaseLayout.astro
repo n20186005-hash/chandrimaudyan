@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
+interface AlternateLocale { hreflang: string; href: string }
 interface Props {
   title: string;
   description: string;
@@ -10,13 +11,30 @@ interface Props {
   imageAlt?: string;
   robots?: string;
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+  lang?: string;
+  ogLocale?: string;
+  altLocales?: AlternateLocale[];
 }
-const { title, description, image = '/images/chandrima-bridge.jpg', imageAlt = 'Chandrima Udyan (চন্দ্রিমা উদ্যান), ঢাকা, বাংলাদেশ', robots = 'index,follow,max-image-preview:large', jsonLd } = Astro.props;
+const {
+  title,
+  description,
+  image = '/images/chandrima-bridge.jpg',
+  imageAlt = 'Chandrima Udyan (চন্দ্রিমা উদ্যান), ঢাকা, বাংলাদেশ',
+  robots = 'index,follow,max-image-preview:large',
+  jsonLd,
+  lang = 'bn-BD',
+  ogLocale = 'bn_BD',
+  altLocales = []
+} = Astro.props;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const absoluteImage = Astro.site ? new URL(image, Astro.site).href : image;
+const absoluteAlternates = altLocales.map((a) => ({
+  hreflang: a.hreflang,
+  href: Astro.site ? new URL(a.href, Astro.site).href : a.href
+}));
 ---
 <!doctype html>
-<html lang="bn-BD">
+<html lang={lang}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -24,7 +42,7 @@ const absoluteImage = Astro.site ? new URL(image, Astro.site).href : image;
   <meta name="description" content={description} />
   <meta name="robots" content={robots} />
   <meta property="og:type" content="website" />
-  <meta property="og:locale" content="bn_BD" />
+  <meta property="og:locale" content={ogLocale} />
   <meta property="og:site_name" content="চন্দ্রিমা উদ্যান (Chandrima Udyan) — ঢাকা ভ্রমণ নির্দেশিকা" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
@@ -36,6 +54,9 @@ const absoluteImage = Astro.site ? new URL(image, Astro.site).href : image;
   <meta name="twitter:image" content={absoluteImage} />
   {canonical && <link rel="canonical" href={canonical} />}
   {canonical && <meta property="og:url" content={canonical} />}
+  {absoluteAlternates.map((a) => (
+    <link rel="alternate" hreflang={a.hreflang} href={a.href} />
+  ))}
   <meta name="theme-color" content="#0b3d2c" />
   <link rel="manifest" href="/manifest.webmanifest" />
   <meta name="apple-mobile-web-app-capable" content="yes" />

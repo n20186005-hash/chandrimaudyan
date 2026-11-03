@@ -5,6 +5,7 @@ import Logo from './Logo.astro';
   <div class="container row">
     <Logo />
     <nav id="site-nav" aria-label="প্রধান নেভিগেশন">
+      <a href="/guides/">নির্দেশিকা</a>
       <a href="/#পরিচিতি">পরিচিতি</a>
       <a href="/#ইতিহাস">ইতিহাস</a>
       <a href="/#পরিকল্পনা">পরিকল্পনা</a>
@@ -16,6 +17,7 @@ import Logo from './Logo.astro';
       <a href="/#গল্প">গল্প</a>
       <a href="/#টিপস">টিপস</a>
       <a href="/#প্রশ্ন">প্রশ্ন</a>
+      <a class="nav-lang" href="/en/" hreflang="en">English</a>
     </nav>
     <div class="hdr-actions">
       <a class="map-btn" href="https://maps.app.goo.gl/zYe6CikwUGvDFyes7" target="_blank" rel="noopener noreferrer">মানচিত্র খুলুন</a>
@@ -46,8 +48,9 @@ import Logo from './Logo.astro';
 <style>
 .site-header{position:sticky;top:0;z-index:40;background:rgba(255,253,247,.9);border-bottom:1px solid rgba(14,75,54,.1);backdrop-filter:blur(14px)}
 .row{height:78px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
-nav{display:flex;gap:1rem;font-weight:700;color:#365c4f;font-size:.95rem}
+nav{display:flex;gap:.72rem;font-weight:700;color:#365c4f;font-size:.9rem;flex-wrap:wrap;justify-content:flex-end}
 nav a:hover{color:#0e4b36}
+nav .nav-lang{background:rgba(14,75,54,.08);border-radius:999px;padding:.22rem .7rem;font-weight:800}
 .hdr-actions{display:flex;align-items:center;gap:.55rem;flex:0 0 auto}
 .map-btn{background:#0e4b36;color:white;border-radius:999px;padding:.7rem 1rem;font-weight:800}
 .menu-btn{display:none;place-items:center;width:44px;height:44px;border-radius:999px;background:#0e4b36;color:#fff;border:0;cursor:pointer;flex:0 0 auto}

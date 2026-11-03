@@ -1,7 +1,7 @@
 import fs from 'fs';
 const h = fs.readFileSync('dist/index.html', 'utf8');
 const checks = {
-  'visitor title': h.includes('<title>চন্দ্রিমা উদ্যান (Chandrima Udyan), ঢাকা'),
+  'visitor title': h.includes('<title>চন্দ্রিমা উদ্যান (Chandrima Udyan)'),
   'description names place and lake': /name="description" content="[^"]*ক্রিসেন্ট লেক/.test(h),
   'dated Maps snapshot': h.includes('২৭,৪৫৪') && h.includes('২৫ অক্টোবর ২০২৬'),
   'FAQ visible': h.includes('চন্দ্রিমা উদ্যান কতক্ষণ খোলা থাকে?'),

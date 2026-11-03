@@ -1,0 +1,278 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Crumb { label: string; href?: string }
+interface LinkItem { label: string; href: string }
+interface FaqItem { q: string; a: string }
+interface PhotoCredit { author: string; date: string; source: string; licence: string; licenceUrl: string }
+interface PhotoItem { src: string; alt: string; caption?: string; credit: PhotoCredit }
+
+const raw = ((Astro.props as { frontmatter?: Record<string, unknown> }).frontmatter ?? Astro.props) as Record<string, unknown>;
+
+const title = String(raw.title ?? '');
+const heading = String(raw.heading ?? raw.title ?? '');
+const description = String(raw.description ?? '');
+const cluster = raw.cluster ? String(raw.cluster) : undefined;
+const quickAnswer = raw.quickAnswer ? String(raw.quickAnswer) : undefined;
+const updated = String(raw.updated ?? '2026-11-02');
+const sources = (raw.sources as LinkItem[] | undefined) ?? [];
+const faq = (raw.faq as FaqItem[] | undefined) ?? [];
+const related = (raw.related as LinkItem[] | undefined) ?? [];
+const breadcrumb = (raw.breadcrumb as Crumb[] | undefined) ?? [];
+const place = raw.place as { name: string; type?: string } | undefined;
+const photos = (raw.photos as PhotoItem[] | undefined) ?? [];
+const lang = raw.lang === 'en' ? 'en' : 'bn';
+const altPath = raw.altPath ? String(raw.altPath) : undefined;
+
+const isEn = lang === 'en';
+const htmlLang = isEn ? 'en' : 'bn-BD';
+const inLanguage = isEn ? 'en' : 'bn-BD';
+
+const bnDigits = (s: string) => s.replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[Number(d)]);
+const bnMonths: Record<string, string> = {
+  '01': 'জানুয়ারি', '02': 'ফেব্রুয়ারি', '03': 'মার্চ', '04': 'এপ্রিল', '05': 'মে', '06': 'জুন',
+  '07': 'জুলাই', '08': 'আগস্ট', '09': 'সেপ্টেম্বর', '10': 'অক্টোবর', '11': 'নভেম্বর', '12': 'ডিসেম্বর'
+};
+const enMonths: Record<string, string> = {
+  '01': 'January', '02': 'February', '03': 'March', '04': 'April', '05': 'May', '06': 'June',
+  '07': 'July', '08': 'August', '09': 'September', '10': 'October', '11': 'November', '12': 'December'
+};
+const formatDate = (iso: string) => {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!m) return iso;
+  return isEn
+    ? `${Number(m[3])} ${enMonths[m[2]]} ${m[1]}`
+    : `${bnDigits(String(Number(m[3])))} ${bnMonths[m[2]]} ${bnDigits(m[1])}`;
+};
+const updatedLabel = formatDate(updated);
+
+const L = isEn
+  ? {
+      home: 'Home',
+      crumbsAria: 'Breadcrumb',
+      answer: 'In short',
+      faq: 'Frequently asked questions',
+      sources: 'Sources',
+      related: 'Related guides',
+      updated: `Information last updated: ${updatedLabel} · An independent guide with sources and dates; verify current conditions locally before you go.`,
+      noteTitle: 'Independent project notice',
+      noteBody: 'This is not an official government website, and no hotel, restaurant or shop is recommended. Sources for the verifiable facts on this page are listed above; verify current timings, tickets and services yourself.',
+      photoNote: 'These are reference photographs, not images of current conditions. The original JPG files are unmodified; size and visible area may change when displayed.',
+      photoCredits: 'Photograph credits and licences',
+      toc: 'On this page',
+      switchLabel: 'বাংলা',
+      switchHref: altPath,
+      switchAria: 'Read this page in Bengali'
+    }
+  : {
+      home: 'হোম',
+      crumbsAria: 'পথনির্দেশ',
+      answer: 'সংক্ষেপে',
+      faq: 'সাধারণ প্রশ্ন',
+      sources: 'তথ্যসূত্র',
+      related: 'সম্পর্কিত নির্দেশিকা',
+      updated: `তথ্য হালনাগাদ: ${updatedLabel} · উৎস ও তারিখসহ স্বাধীন নির্দেশিকা; যাওয়ার আগে বর্তমান অবস্থা স্থানীয়ভাবে যাচাই করুন।`,
+      noteTitle: 'স্বাধীন প্রকল্পের ঘোষণা',
+      noteBody: 'এটি কোনো সরকারি সংস্থার ওয়েবসাইট নয়; কোনো হোটেল, রেস্তোরাঁ বা দোকান সুপারিশ করা হয় না। এখানকার যাচাইযোগ্য তথ্যের উৎস উপরে দেওয়া; বর্তমান সময়সূচি, টিকিট বা সেবা নিজে যাচাই করে নিন।',
+      photoNote: 'এগুলো ঐতিহাসিক আলোকচিত্র, বর্তমান অবস্থার সরাসরি ছবি নয়। মূল JPG অপরিবর্তিত; পৃষ্ঠায় দেখানোর সময় আকার ও দৃশ্যমান অংশ বদলাতে পারে।',
+      photoCredits: 'আলোকচিত্রের কৃতিত্ব ও লাইসেন্স',
+      toc: 'এই পাতায় যা আছে',
+      switchLabel: 'English',
+      switchHref: altPath,
+      switchAria: 'Read this page in English'
+    };
+
+const siteUrl = Astro.site?.href.replace(/\/$/, '');
+const pageUrl = siteUrl ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const crumbs: Crumb[] = [{ label: L.home, href: isEn ? '/en/' : '/' }, ...breadcrumb];
+const abs = (p: string) => (siteUrl ? new URL(p, Astro.site).href : p);
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: crumbs.map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.label,
+    ...(c.href && siteUrl ? { item: abs(c.href) } : {})
+  }))
+};
+
+const imageLd = photos.map((p) => ({
+  '@type': 'ImageObject',
+  ...(siteUrl ? { '@id': `${abs(p.src)}#image`, contentUrl: abs(p.src), url: abs(p.src) } : {}),
+  caption: p.caption ?? p.alt,
+  creditText: p.credit.author,
+  copyrightNotice: `© ${p.credit.author} (${p.credit.date})`,
+  license: p.credit.licenceUrl,
+  acquireLicensePage: p.credit.source
+}));
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  ...(pageUrl ? { '@id': `${pageUrl}#article`, mainEntityOfPage: pageUrl } : {}),
+  headline: heading,
+  name: title,
+  description,
+  inLanguage,
+  datePublished: updated,
+  dateModified: updated,
+  ...(imageLd.length ? { image: imageLd, thumbnailUrl: abs(photos[0].src) } : {}),
+  ...(siteUrl ? { isPartOf: { '@id': `${siteUrl}/#website` }, author: { '@id': `${siteUrl}/#organization` }, publisher: { '@id': `${siteUrl}/#organization` } } : {}),
+  about: place
+    ? { '@type': place.type ?? 'Place', name: place.name }
+    : { '@id': siteUrl ? `${siteUrl}/#attraction` : undefined }
+};
+
+const faqLd = faq.length
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      inLanguage,
+      mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } }))
+    }
+  : undefined;
+
+const jsonLd = [breadcrumbLd, articleLd, ...(faqLd ? [faqLd] : [])];
+
+const altLocales = altPath
+  ? [
+      { hreflang: inLanguage, href: Astro.url.pathname },
+      { hreflang: isEn ? 'bn-BD' : 'en', href: altPath },
+      { hreflang: 'x-default', href: isEn ? altPath : Astro.url.pathname }
+    ]
+  : [];
+
+/* Build a table of contents from the rendered Markdown body (Astro assigns heading ids). */
+const bodyHtml = await Astro.slots.render('default');
+const tocItems: { id: string; text: string }[] = [];
+const bodyWithIds = bodyHtml.replace(/<h2([^>]*)>([\s\S]*?)<\/h2>/g, (match, attrs: string, inner: string) => {
+  const idMatch = /\bid="([^"]+)"/.exec(attrs);
+  const id = idMatch ? idMatch[1] : `sec-${tocItems.length + 1}`;
+  const nextAttrs = idMatch ? attrs : `${attrs} id="${id}"`;
+  const text = inner.replace(/<[^>]*>/g, '').trim();
+  if (text) tocItems.push({ id, text });
+  return `<h2${nextAttrs}>${inner}</h2>`;
+});
+---
+<BaseLayout
+  title={title}
+  description={description}
+  imageAlt={heading}
+  jsonLd={jsonLd}
+  lang={htmlLang}
+  ogLocale={isEn ? 'en_US' : 'bn_BD'}
+  altLocales={altLocales}
+>
+  <article class="guide">
+    <div class="container">
+      <nav class="guide-crumbs" aria-label={L.crumbsAria}>
+        {crumbs.map((c, i) => (
+          <>
+            {c.href && i < crumbs.length - 1
+              ? <a href={c.href}>{c.label}</a>
+              : <span aria-current={i === crumbs.length - 1 ? 'page' : undefined}>{c.label}</span>}
+            {i < crumbs.length - 1 && <i aria-hidden="true">›</i>}
+          </>
+        ))}
+        {L.switchHref && (
+          <a class="guide-lang" href={L.switchHref} hreflang={isEn ? 'bn-BD' : 'en'} aria-label={L.switchAria}>{L.switchLabel}</a>
+        )}
+      </nav>
+
+      {cluster && <p class="eyebrow">{cluster}</p>}
+      <h1>{heading}</h1>
+
+      {quickAnswer && (
+        <div class="guide-answer">
+          <b>{L.answer}</b>
+          <p>{quickAnswer}</p>
+        </div>
+      )}
+
+      {photos.length > 0 && (
+        <div class="guide-photos">
+          {photos.map((p) => (
+            <figure>
+              <img src={p.src} alt={p.alt} loading="lazy" />
+              {p.caption && <figcaption>{p.caption}</figcaption>}
+            </figure>
+          ))}
+        </div>
+      )}
+
+      {tocItems.length >= 4 && (
+        <nav class="guide-toc" aria-labelledby="guide-toc-title">
+          <h2 id="guide-toc-title">{L.toc}</h2>
+          <ol>
+            {tocItems.map((t) => (
+              <li><a href={`#${t.id}`}>{t.text}</a></li>
+            ))}
+          </ol>
+        </nav>
+      )}
+
+      <div class="guide-body" set:html={bodyWithIds} />
+
+      {photos.length > 0 && (
+        <section class="guide-block guide-photo-credits" aria-labelledby="guide-credit-title">
+          <h2 id="guide-credit-title">{L.photoCredits}</h2>
+          <p>{L.photoNote}</p>
+          <ul>
+            {photos.map((p) => (
+              <li>
+                <a href={p.src}>{p.alt}</a> — © {p.credit.author} ({p.credit.date}) ·{' '}
+                <a href={p.credit.source} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a> ·{' '}
+                <a href={p.credit.licenceUrl} target="_blank" rel="noopener noreferrer">{p.credit.licence}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {faq.length > 0 && (
+        <section class="guide-block" aria-labelledby="guide-faq-title">
+          <h2 id="guide-faq-title">{L.faq}</h2>
+          <div class="guide-faq">
+            {faq.map((f) => (
+              <details>
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {sources.length > 0 && (
+        <section class="guide-block" aria-labelledby="guide-src-title">
+          <h2 id="guide-src-title">{L.sources}</h2>
+          <ul class="src-list">
+            {sources.map((s) => (
+              <li><a href={s.href} target="_blank" rel="noopener noreferrer">{s.label} ↗</a></li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {related.length > 0 && (
+        <section class="guide-block" aria-labelledby="guide-rel-title">
+          <h2 id="guide-rel-title">{L.related}</h2>
+          <ul class="guide-links">
+            {related.map((r) => (
+              <li><a href={r.href}>{r.label}</a></li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <p class="guide-updated">{L.updated}</p>
+
+      <div class="neutral-note">
+        <b>{L.noteTitle}</b>
+        <p>{L.noteBody}</p>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

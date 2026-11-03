@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { guideClusters, allGuides } from '../../data/guides';
+
+export const prerender = true;
+
+const siteUrl = Astro.site?.href.replace(/\/$/, '');
+const pageUrl = siteUrl ? `${siteUrl}/en/guides/` : undefined;
+
+const title = 'All guides — Chandrima Udyan (চন্দ্রিমা উদ্যান), Dhaka';
+const description = 'History, opening hours, transport, nearby sights, food and ready-made trip plans for Chandrima Udyan in Dhaka — every independent guide on one page.';
+
+const collectionLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  ...(pageUrl ? { '@id': `${pageUrl}#collection`, url: pageUrl } : {}),
+  name: title,
+  description,
+  inLanguage: 'en',
+  ...(siteUrl ? { isPartOf: { '@id': `${siteUrl}/#website` }, publisher: { '@id': `${siteUrl}/#organization` } } : {}),
+  hasPart: allGuides.map((g) => ({
+    '@type': 'Article',
+    headline: g.labelEn,
+    ...(siteUrl ? { url: new URL(g.hrefEn, Astro.site).href } : {})
+  }))
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', ...(siteUrl ? { item: `${siteUrl}/en/` } : {}) },
+    { '@type': 'ListItem', position: 2, name: 'All guides' }
+  ]
+};
+---
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[breadcrumbLd, collectionLd]}
+  imageAlt="Chandrima Udyan guide index"
+  lang="en"
+  ogLocale="en_US"
+  altLocales={[
+    { hreflang: 'en', href: '/en/guides/' },
+    { hreflang: 'bn-BD', href: '/guides/' },
+    { hreflang: 'x-default', href: '/guides/' }
+  ]}
+>
+  <article class="guide hub">
+    <div class="container">
+      <nav class="guide-crumbs" aria-label="Breadcrumb">
+        <a href="/en/">Home</a><i aria-hidden="true">›</i><span aria-current="page">All guides</span>
+        <a class="guide-lang" href="/guides/" hreflang="bn-BD" aria-label="এই পাতা বাংলায় পড়ুন">বাংলা</a>
+      </nav>
+      <p class="eyebrow">Guide index</p>
+      <h1>Every guide to Chandrima Udyan</h1>
+      <div class="guide-answer">
+        <b>In short</b>
+        <p>{allGuides.length} independent guides, grouped into five sections: the park and its history, planning, getting there, nearby places and food, and ready-made routes. Pick the section you need before you set out.</p>
+      </div>
+      {guideClusters.map((cluster) => (
+        <section class="hub-cluster" aria-labelledby={`hub-${cluster.key}`}>
+          <h2 id={`hub-${cluster.key}`}>{cluster.titleEn}</h2>
+          <p class="hub-note">{cluster.noteEn}</p>
+          <ul class="guide-links">
+            {cluster.items.map((item) => (
+              <li><a href={item.hrefEn}>{item.labelEn}</a></li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <p class="guide-updated">Information last updated: 2 November 2026 · An independent guide with sources and dates; verify current conditions locally before you go.</p>
+      <div class="neutral-note">
+        <b>Independent project notice</b>
+        <p>This is not an official government website, and no hotel, restaurant or shop is recommended. Each page lists its own sources and review date.</p>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+.hub h1{margin-bottom:1.2rem}
+.hub-cluster{margin-top:2.8rem}
+.hub-cluster h2{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;margin:0 0 .35rem}
+.hub-note{margin:0 0 1rem;color:var(--muted);font-size:.95rem}
+</style>

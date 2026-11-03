@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { guideClusters } from '../../data/guides';
+
+export const prerender = true;
+
+const siteUrl = Astro.site?.href.replace(/\/$/, '');
+const pageUrl = siteUrl ? `${siteUrl}/en/` : undefined;
+
+const title = 'Chandrima Udyan, Dhaka — visitor guide (location, transport, hours)';
+const description = 'Independent English guide to Chandrima Udyan (চন্দ্রিমা উদ্যান), Dhaka: where it is, metro routes, what to see nearby and what to check before you visit.';
+
+const webPageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  ...(pageUrl ? { '@id': `${pageUrl}#webpage`, url: pageUrl } : {}),
+  name: title,
+  description,
+  inLanguage: 'en',
+  datePublished: '2026-11-02',
+  dateModified: '2026-11-02',
+  ...(siteUrl ? { isPartOf: { '@id': `${siteUrl}/#website` }, about: { '@id': `${siteUrl}/#attraction` }, publisher: { '@id': `${siteUrl}/#organization` } } : {})
+};
+
+const facts = [
+  { k: 'Where it is', v: 'Sher-e-Bangla Nagar, Dhaka, beside Crescent Lake and the National Parliament building. Maps list the address as “Crecent, Lake Road, Dhaka”.' },
+  { k: 'Closest metro', v: 'Bijoy Sarani on MRT Line 6 is generally treated as the nearest station; Agargaon is a little further. Confirm current station details with DMTCL.' },
+  { k: 'Opening hours', v: 'Third-party listings differ, so no fixed daily timetable is published here. Check the notice at the gate and the official channels before travelling.' },
+  { k: 'Tickets', v: 'No entrance-fee figure is stated here because it can change. Verify current rules on site.' },
+  { k: 'Time needed', v: 'Most visitors walk the lakeside paths and the memorial area in about 30 to 90 minutes, depending on how far they go.' }
+];
+
+const startHere = [
+  { href: '/en/how-to-get-there/', label: 'How to get there' },
+  { href: '/en/opening-hours/', label: 'Opening hours: what we know' },
+  { href: '/en/park-map-entrances/', label: 'Map, address and entrances' },
+  { href: '/en/history/', label: 'History of the park' },
+  { href: '/en/itineraries/park-parliament-2-hours/', label: 'Two-hour route with the parliament building' },
+  { href: '/en/nearby/military-museum/', label: 'The Military Museum nearby' }
+];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={webPageLd}
+  imageAlt="Chandrima Udyan, Sher-e-Bangla Nagar, Dhaka"
+  lang="en"
+  ogLocale="en_US"
+  altLocales={[
+    { hreflang: 'en', href: '/en/' },
+    { hreflang: 'bn-BD', href: '/' },
+    { hreflang: 'x-default', href: '/' }
+  ]}
+>
+  <section class="section en-hero">
+    <div class="container">
+      <nav class="guide-crumbs" aria-label="Breadcrumb">
+        <span aria-current="page">Home</span>
+        <a class="guide-lang" href="/" hreflang="bn-BD" aria-label="এই পাতা বাংলায় পড়ুন">বাংলা</a>
+      </nav>
+      <p class="eyebrow">Independent visitor guide</p>
+      <h1 class="section-title">Chandrima Udyan, Dhaka</h1>
+      <p class="section-copy">Chandrima Udyan (চন্দ্রিমা উদ্যান) is a public park and memorial garden in Sher-e-Bangla Nagar, wrapped around Crescent Lake and sitting beside the National Parliament building. This site is an independent guide to visiting it: where it is, how to arrive, what is nearby, and exactly which details you should confirm yourself before setting out.</p>
+
+      <div class="guide-answer">
+        <b>In short</b>
+        <p>Take MRT Line 6 to Bijoy Sarani, then walk or take a short rickshaw ride to the park. Bring extra time for traffic and security checks, go in daylight, and check the gate notice for current hours — third-party timings are not reliable enough to plan around.</p>
+      </div>
+
+      <div class="en-facts">
+        {facts.map((f) => (
+          <div class="en-fact">
+            <b>{f.k}</b>
+            <p>{f.v}</p>
+          </div>
+        ))}
+      </div>
+
+      <h2 class="en-sub">Start here</h2>
+      <ul class="guide-links">
+        {startHere.map((s) => (
+          <li><a href={s.href}>{s.label}</a></li>
+        ))}
+      </ul>
+
+      <h2 class="en-sub">Every guide, by section</h2>
+      {guideClusters.map((cluster) => (
+        <div class="en-cluster">
+          <h3>{cluster.titleEn}</h3>
+          <p class="en-note">{cluster.noteEn}</p>
+          <ul class="guide-links">
+            {cluster.items.map((item) => (
+              <li><a href={item.hrefEn}>{item.labelEn}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
+      <p class="guide-updated">Information last updated: 2 November 2026 · An independent guide with sources and dates; verify current conditions locally before you go.</p>
+
+      <div class="neutral-note">
+        <b>Independent project notice</b>
+        <p>This is not an official government website, and no hotel, restaurant or shop is recommended. Facts that can be checked are sourced on each page; opening times, tickets and services change and should be verified yourself.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+.en-hero h1{margin-bottom:1rem}
+.en-sub{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;margin:2.8rem 0 1rem}
+.en-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem;margin:1.8rem 0 0}
+.en-fact{background:rgba(255,253,247,.9);border:1px solid var(--line);border-radius:20px;padding:1rem 1.15rem}
+.en-fact b{display:block;color:var(--forest);font-size:.86rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.35rem}
+.en-fact p{margin:0;color:var(--muted);font-size:.95rem;line-height:1.6}
+.en-cluster{margin-top:1.8rem}
+.en-cluster h3{font-size:1.15rem;font-weight:900;margin:0 0 .25rem}
+.en-note{margin:0 0 .8rem;color:var(--muted);font-size:.92rem}
+@media (max-width:640px){
+  .en-facts{grid-template-columns:1fr}
+}
+</style>
